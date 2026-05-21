@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_clinica_paciente_tree" model="ir.ui.view">
+        <field name="name">clinica.paciente.tree</field>
+        <field name="model">clinica.paciente</field>
+        <field name="arch" type="xml">
+            <tree string="Pacientes">
+                <field name="name"/>
+                <field name="fecha_nacimiento"/>
+                <field name="tipo_sangre"/>
+                <field name="telefono"/>
+                <field name="es_alergico"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_clinica_paciente_form" model="ir.ui.view">
+        <field name="name">clinica.paciente.form</field>
+        <field name="model">clinica.paciente</field>
+        <field name="arch" type="xml">
+            <form string="Paciente">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="fecha_nacimiento"/>
+                            <field name="tipo_sangre"/>
+                        </group>
+                        <group>
+                            <field name="telefono"/>
+                            <field name="email"/>
+                            <field name="es_alergico"/>
+                            <field name="detalles_alergias"
+                                   invisible="not es_alergico"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_clinica_paciente" model="ir.actions.act_window">
+        <field name="name">Pacientes</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinica.paciente</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primer paciente
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_clinica_root" name="Clínica Médica"/>
+    <menuitem id="menu_clinica_pacientes_cat"
+              name="Pacientes"
+              parent="menu_clinica_root"
+              sequence="10"/>
+
+    <menuitem id="menu_clinica_paciente"
+              name="Registro de Pacientes"
+              parent="menu_clinica_pacientes_cat"
+              action="action_clinica_paciente"
+              sequence="10"/>
+
+</odoo>

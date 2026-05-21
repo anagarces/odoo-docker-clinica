@@ -1,5 +1,8 @@
 __pycache__/
 *.pyc
-*.log
+*.pyo
 *.db
-.vscode/
+*.log
+.env
+.odoo/
+filestore/
