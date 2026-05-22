@@ -1,1 +1,1 @@
-from . import paciente
+from . import paciente, medico
