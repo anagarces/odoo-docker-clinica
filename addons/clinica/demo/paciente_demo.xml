@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="demo_paciente_1" model="clinica.paciente">
+            <field name="name">Juan Pérez Gómez</field>
+            <field name="fecha_nacimiento">1990-05-15</field>
+            <field name="tipo_sangre">o_positive</field>
+            <field name="telefono">+34 600 123 456</field>
+            <field name="email">juan.perez@example.com</field>
+            <field name="es_alergico">False</field>
+        </record>
+
+        <record id="demo_paciente_2" model="clinica.paciente">
+            <field name="name">María Rodríguez López</field>
+            <field name="fecha_nacimiento">1985-11-22</field>
+            <field name="tipo_sangre">a_negative</field>
+            <field name="telefono">+34 611 987 654</field>
+            <field name="email">maria.rod@example.com</field>
+            <field name="es_alergico">True</field>
+            <field name="detalles_alergias">Alergia severa a la Penicilina.</field>
+        </record>
+    </data>
+</odoo>
