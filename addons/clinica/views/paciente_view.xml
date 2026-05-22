@@ -52,16 +52,5 @@
         </field>
     </record>
 
-    <menuitem id="menu_clinica_root" name="Clínica Médica"/>
-    <menuitem id="menu_clinica_pacientes_cat"
-              name="Pacientes"
-              parent="menu_clinica_root"
-              sequence="10"/>
-
-    <menuitem id="menu_clinica_paciente"
-              name="Registro de Pacientes"
-              parent="menu_clinica_pacientes_cat"
-              action="action_clinica_paciente"
-              sequence="10"/>
 
 </odoo>

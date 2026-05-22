@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_clinica_cita_tree" model="ir.ui.view">
+        <field name="name">clinica.cita.tree</field>
+        <field name="model">clinica.cita</field>
+        <field name="arch" type="xml">
+            <tree string="Citas Médicas">
+                <field name="fecha_cita"/>
+                <field name="paciente_id"/>
+                <field name="medico_id"/>
+                <field name="estado" widget="badge" decoration-info="estado == 'borrador'" decoration-success="estado == 'concluida'" decoration-danger="estado == 'cancelada'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_clinica_cita_form" model="ir.ui.view">
+        <field name="name">clinica.cita.form</field>
+        <field name="model">clinica.cita</field>
+        <field name="arch" type="xml">
+            <form string="Cita Médica">
+                <header>
+                    <field name="estado" widget="statusbar" statusbar_visible="borrador,concluida,cancelada"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="paciente_id"/>
+                            <field name="medico_id"/>
+                        </group>
+                        <group>
+                            <field name="fecha_cita"/>
+                        </group>
+                    </group>
+                    <group string="Notas Médicas">
+                        <field name="motivo" placeholder="Escribe aquí el motivo de la consulta..."/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_clinica_cita" model="ir.actions.act_window">
+        <field name="name">Citas Médicas</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinica.cita</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
