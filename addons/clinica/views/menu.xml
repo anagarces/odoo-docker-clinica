@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+   <odoo>
+   
+    <menuitem id="menu_clinica_root" name="Clínica Médica"/>
+    <menuitem id="menu_clinica_pacientes_cat"
+              name="Pacientes"
+              parent="menu_clinica_root"
+              sequence="10"/>
+
+    <menuitem id="menu_clinica_paciente"
+              name="Registro de Pacientes"
+              parent="menu_clinica_pacientes_cat"
+              action="action_clinica_paciente"
+              sequence="10"/>
+
+    <menuitem id="menu_clinica_medicos_cat" 
+                name="Médicos" 
+                parent="menu_clinica_root" 
+                sequence="20"/>
+
+    <menuitem id="menu_clinica_medico" 
+              name="Registro de Médicos" 
+              parent="menu_clinica_medicos_cat" 
+              action="action_clinica_medico" 
+              sequence="10"/>
+
+    <menuitem id="menu_clinica_citas_cat" 
+              name="Citas" 
+              parent="menu_clinica_root" 
+              sequence="30"/>
+
+    <menuitem id="menu_clinica_cita" 
+              name="Control de Citas" 
+              parent="menu_clinica_citas_cat" 
+              action="action_clinica_cita" 
+              sequence="10"/>
+</odoo>

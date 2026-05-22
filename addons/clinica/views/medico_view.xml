@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_clinica_medico_tree" model="ir.ui.view">
+        <field name="name">clinica.medico.tree</field>
+        <field name="model">clinica.medico</field>
+        <field name="arch" type="xml">
+            <tree string="Médicos">
+                <field name="name"/>
+                <field name="especialidad"/>
+                <field name="num_colegiado"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_clinica_medico_form" model="ir.ui.view">
+        <field name="name">clinica.medico.form</field>
+        <field name="model">clinica.medico</field>
+        <field name="arch" type="xml">
+            <form string="Médico">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="especialidad"/>
+                        <field name="num_colegiado"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_clinica_medico" model="ir.actions.act_window">
+        <field name="name">Médicos</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">clinica.medico</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</odoo>
