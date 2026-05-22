@@ -23,3 +23,4 @@ class ClinicaPaciente(models.Model):
         ],
         string='Tipo de Sangre'
     )
+    medico_id = fields.Many2one('clinica.medico', string='Médico de cabecera')
