@@ -6,6 +6,7 @@
     'depends': ['base'],
     'data': [
         'security/ir.model.access.csv',
+        'data/sequence.xml',
         'views/medico_view.xml',
         'views/paciente_view.xml',
         'views/cita_view.xml',

@@ -1,0 +1,8 @@
+<odoo>
+    <record id="seq_clinica_cita" model="ir.sequence">
+        <field name="name">Cita Médica</field>
+        <field name="code">clinica.cita</field>
+        <field name="prefix">CITA/%(year)s/</field>
+        <field name="padding">4</field>
+    </record>
+</odoo>
