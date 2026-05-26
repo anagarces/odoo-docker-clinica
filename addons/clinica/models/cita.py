@@ -6,7 +6,7 @@ class ClinicaCita(models.Model):
     _name = 'clinica.cita'
     _description = 'Cita Médica'
 
-    name = fields.Char(string="Código", readonly=True, copy=False)
+    name = fields.Char(string="Código", readonly=True, copy=False, default='Nuevo')
 
     paciente_id = fields.Many2one(
         'clinica.paciente',
@@ -37,7 +37,7 @@ class ClinicaCita(models.Model):
     # Generar código automático
     @api.model
     def create(self, vals):
-        if vals.get('name', 'Nuevo') == 'Nuevo':
+        if not vals.get('name') or vals.get('name', 'Nuevo') == 'Nuevo':
             vals['name'] = self.env['ir.sequence'].next_by_code('clinica.cita') or '/'
         return super().create(vals)
 
