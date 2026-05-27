@@ -12,3 +12,18 @@ class ClinicaMedico(models.Model):
         ('dermatologia', 'Dermatología')
     ], string='Especialidad', default='general', required=True)
     num_colegiado = fields.Char(string='Número de Colegiado', required=True)
+    duracion_cita = fields.Integer(
+        string='Duración de Cita (minutos)',
+        default=40,
+        required=True
+    )
+    horario_ids = fields.One2many(
+        'clinica.medico.horario',
+        'medico_id',
+        string='Horarios de Atención'
+    )
+    slot_ids = fields.One2many(
+        'clinica.slot',
+        'medico_id',
+        string='Slots Generados'
+    )
