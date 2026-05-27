@@ -1,4 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_clinica_paciente,access_clinica_paciente,model_clinica_paciente,base.group_user,1,1,1,1
-access_clinica_medico,access_clinica_medico,model_clinica_medico,base.group_user,1,1,1,1
-access_clinica_cita,access_clinica_cita,model_clinica_cita,base.group_user,1,1,1,1
+access_clinica_paciente,access.clinica.paciente,model_clinica_paciente,,1,1,1,1
+access_clinica_medico,access.clinica.medico,model_clinica_medico,,1,1,1,1
+access_clinica_medico_horario,access.clinica.medico.horario,model_clinica_medico_horario,,1,1,1,1
+access_clinica_slot,access.clinica.slot,model_clinica_slot,,1,1,1,1
+access_clinica_ausencia,access.clinica.ausencia,model_clinica_ausencia,,1,1,1,1
+access_clinica_cita,access.clinica.cita,model_clinica_cita,,1,1,1,1

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- VISTA LISTA -->
+    <record id="view_clinica_medico_horario_list" model="ir.ui.view">
+        <field name="name">clinica.medico.horario.list</field>
+        <field name="model">clinica.medico.horario</field>
+        <field name="arch" type="xml">
+            <list string="Horarios">
+                <field name="medico_id"/>
+                <field name="dia_semana"/>
+                <field name="hora_inicio" widget="float_time"/>
+                <field name="hora_fin" widget="float_time"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- VISTA FORMULARIO -->
+    <record id="view_clinica_medico_horario_form" model="ir.ui.view">
+        <field name="name">clinica.medico.horario.form</field>
+        <field name="model">clinica.medico.horario</field>
+        <field name="arch" type="xml">
+            <form string="Franja Horaria">
+                <sheet>
+                    <group>
+                        <field name="medico_id"/>
+                        <field name="dia_semana"/>
+                        <field name="hora_inicio" widget="float_time"/>
+                        <field name="hora_fin" widget="float_time"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACCIÓN -->
+    <record id="action_clinica_medico_horario" model="ir.actions.act_window">
+        <field name="name">Horarios de Médicos</field>
+        <field name="res_model">clinica.medico.horario</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

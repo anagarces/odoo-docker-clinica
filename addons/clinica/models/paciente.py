@@ -24,3 +24,8 @@ class ClinicaPaciente(models.Model):
         string='Tipo de Sangre'
     )
     medico_id = fields.Many2one('clinica.medico', string='Médico de cabecera')
+    cita_ids = fields.One2many(
+    'clinica.cita',
+    'paciente_id',
+    string='Historial de Citas'
+)

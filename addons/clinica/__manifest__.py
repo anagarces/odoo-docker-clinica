@@ -7,7 +7,11 @@
     'data': [
         'security/ir.model.access.csv',
         'data/sequence.xml',
+        'data/cron.xml',
         'views/medico_view.xml',
+        'views/medico_horario_view.xml',
+        'views/slot_view.xml',
+        'views/ausencia_view.xml',
         'views/paciente_view.xml',
         'views/cita_view.xml',
         'views/menu.xml',
