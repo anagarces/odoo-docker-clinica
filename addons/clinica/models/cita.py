@@ -1,3 +1,4 @@
+# clinica_cita.py
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
@@ -6,55 +7,79 @@ class ClinicaCita(models.Model):
     _name = 'clinica.cita'
     _description = 'Cita Médica'
 
-    name = fields.Char(string="Código", readonly=True, copy=False)
-
+    name = fields.Char(
+        string="Código",
+        readonly=True,
+        copy=False,
+        default='Nuevo'
+    )
     paciente_id = fields.Many2one(
         'clinica.paciente',
         string='Paciente',
         required=True
     )
-
     medico_id = fields.Many2one(
         'clinica.medico',
         string='Médico Especialista',
         required=True
     )
-
-    fecha_cita = fields.Datetime(
-        string='Fecha y Hora de la Cita',
+    slot_id = fields.Many2one(
+        'clinica.slot',
+        string='Horario Disponible',
         required=True,
-        default=fields.Datetime.now
+        domain="[('medico_id', '=', medico_id), ('estado', '=', 'libre')]"
     )
 
+    # Campos informativos derivados del slot
+    fecha_inicio = fields.Datetime(
+        related='slot_id.fecha_inicio',
+        string='Fecha y Hora',
+        store=True,
+        readonly=True
+    )
     motivo = fields.Text(string='Motivo de la Consulta')
-
     estado = fields.Selection([
         ('borrador', 'Programada'),
         ('concluida', 'Asistió'),
         ('cancelada', 'Cancelada')
     ], string='Estado', default='borrador', required=True)
 
-    # Generar código automático
     @api.model
     def create(self, vals):
-        if vals.get('name', 'Nuevo') == 'Nuevo':
-            vals['name'] = self.env['ir.sequence'].next_by_code('clinica.cita') or '/'
+        if not vals.get('name') or vals.get('name', 'Nuevo') == 'Nuevo':
+            vals['name'] = (
+                self.env['ir.sequence'].next_by_code('clinica.cita') or '/'
+            )
         return super().create(vals)
 
-   
-    # VALIDACIÓN DE HORARIO
-    @api.constrains('medico_id', 'fecha_cita')
-    def _check_disponibilidad_medico(self):
-        for cita in self:
-            citas_duplicadas = self.search([
-                ('id', '!=', cita.id),
-                ('medico_id', '=', cita.medico_id.id),
-                ('fecha_cita', '=', cita.fecha_cita),
-                ('estado', '!=', 'cancelada')
-            ])
+    def write(self, vals):
+        res = super().write(vals)
+        # Si la cita se cancela, liberar el slot
+        if vals.get('estado') == 'cancelada':
+            for cita in self:
+                if cita.slot_id:
+                    cita.slot_id.write({
+                        'estado': 'libre',
+                        'cita_id': False
+                    })
+        return res
 
-            if citas_duplicadas:
-                raise ValidationError(
-                    f"¡Conflicto de Horario! El médico {cita.medico_id.name} "
-                    f"ya tiene una cita en {cita.fecha_cita}."
-                )
+    @api.constrains('slot_id', 'paciente_id', 'estado')
+    def _check_disponibilidad(self):
+        for cita in self:
+            if cita.estado == 'cancelada':
+                continue
+            # Verificar que el paciente no tenga otra cita en el mismo slot horario
+            if cita.slot_id:
+                citas_solapadas = self.search([
+                    ('id', '!=', cita.id),
+                    ('paciente_id', '=', cita.paciente_id.id),
+                    ('estado', '!=', 'cancelada'),
+                    ('slot_id.fecha_inicio', '<', cita.slot_id.fecha_fin),
+                    ('slot_id.fecha_fin', '>', cita.slot_id.fecha_inicio),
+                ])
+                if citas_solapadas:
+                    raise ValidationError(
+                        f"El paciente {cita.paciente_id.name} ya tiene "
+                        f"una cita en ese horario con otro médico."
+                    )
