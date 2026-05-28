@@ -6,12 +6,12 @@
         <field name="name">clinica.medico.list</field>
         <field name="model">clinica.medico</field>
         <field name="arch" type="xml">
-            <list string="Médicos">
+            <tree string="Médicos">
                 <field name="name"/>
                 <field name="especialidad"/>
                 <field name="num_colegiado"/>
                 <field name="duracion_cita"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -34,6 +34,7 @@
                         <group>
                             <field name="name"/>
                             <field name="especialidad"/>
+                            <field name="tz"/>
                         </group>
                         <group>
                             <field name="num_colegiado"/>
@@ -44,18 +45,18 @@
                     <notebook>
                         <page string="Horarios de Atención">
                             <field name="horario_ids">
-                                <list editable="bottom">
+                                <tree editable="bottom">
                                     <field name="dia_semana"/>
                                     <field name="hora_inicio"
                                         widget="float_time"/>
                                     <field name="hora_fin"
                                         widget="float_time"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Slots Generados">
                             <field name="slot_ids">
-                                <list>
+                                <tree>
                                     <field name="fecha_inicio"/>
                                     <field name="fecha_fin"/>
                                     <field name="estado"
@@ -64,17 +65,17 @@
                                         decoration-muted="estado == 'bloqueado'"
                                     />
                                     <field name="cita_id"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                         <page string="Ausencias">
                             <field name="ausencia_ids">
-                                <list>
+                                <tree>
                                     <field name="fecha_inicio"/>
                                     <field name="fecha_fin"/>
                                     <field name="motivo"/>
                                     <field name="estado"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                     </notebook>

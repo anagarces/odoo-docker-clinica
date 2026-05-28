@@ -1,6 +1,7 @@
 # clinica_slot.py
 from odoo import models, fields, api
-from datetime import timedelta, datetime
+from datetime import timedelta, datetime, date
+import pytz
 
 
 class ClinicaSlot(models.Model):
@@ -43,69 +44,73 @@ class ClinicaSlot(models.Model):
 
     @api.depends('fecha_inicio', 'medico_id', 'estado')
     def _compute_name(self):
-        estado_labels = {'libre': '✅', 'ocupado': '🔴', 'bloqueado': '⛔'}
         for slot in self:
             if slot.fecha_inicio and slot.medico_id:
-                icono = estado_labels.get(slot.estado, '')
+                #   Convertir UTC a timezone local del médico para mostrar
+                tz_name = slot.medico_id.tz or 'Europe/Madrid'
+                tz = pytz.timezone(tz_name)
+                fecha_local = pytz.utc.localize(
+                    slot.fecha_inicio
+                ).astimezone(tz)
                 slot.name = (
-                    f"{icono} {slot.medico_id.name} — "
-                    f"{slot.fecha_inicio.strftime('%d/%m/%Y %H:%M')}"
-                )
+                    f"{slot.medico_id.name} — "
+                    f"{fecha_local.strftime('%d/%m/%Y %H:%M')}"
+            )
 
     @api.model
     def generar_slots_medico(self, medico, fecha_inicio, fecha_fin):
-        """
-        Genera slots para un médico en un rango de fechas.
-        No sobreescribe slots ya existentes.
-        Retorna el número de slots creados.
-        """
         if not medico.horario_ids:
             return 0
 
-        # Obtener días de la semana que trabaja este médico
-        # Estructura: {0: [(9.0, 13.0), (16.0, 20.0)], 2: [(9.0, 13.0)], ...}
+        # Obtener timezone del usuario o usar UTC por defecto
+        tz_name = self.env.user.tz or 'UTC'
+        import pytz
+        tz = pytz.timezone(tz_name)
+
         horarios_por_dia = {}
         for horario in medico.horario_ids:
-            dia = int(horario.dia_semana)
-            if dia not in horarios_por_dia:
-                horarios_por_dia[dia] = []
-            horarios_por_dia[dia].append(
-                (horario.hora_inicio, horario.hora_fin)
-            )
+                dia = int(horario.dia_semana)
+                if dia not in horarios_por_dia:
+                    horarios_por_dia[dia] = []
+                horarios_por_dia[dia].append(
+                    (horario.hora_inicio, horario.hora_fin)
+                )
 
         duracion = timedelta(minutes=medico.duracion_cita)
         slots_a_crear = []
         fecha_actual = fecha_inicio
 
         while fecha_actual <= fecha_fin:
-            dia_semana = fecha_actual.weekday()  # 0=lunes, 6=domingo
+            dia_semana = fecha_actual.weekday()
 
             if dia_semana in horarios_por_dia:
                 for hora_inicio, hora_fin in horarios_por_dia[dia_semana]:
 
-                    # Convertir float a horas y minutos
-                    # 9.5 → 9 horas, 30 minutos
                     h_ini = int(hora_inicio)
                     m_ini = int(round((hora_inicio - h_ini) * 60))
                     h_fin = int(hora_fin)
                     m_fin = int(round((hora_fin - h_fin) * 60))
 
-                    slot_inicio = fecha_actual.replace(
-                        hour=h_ini, minute=m_ini,
-                        second=0, microsecond=0
-                    )
-                    franja_fin = fecha_actual.replace(
-                        hour=h_fin, minute=m_fin,
-                        second=0, microsecond=0
-                    )
+                    # Construir datetime en hora local y convertir a UTC
+                    slot_inicio_local = tz.localize(datetime(
+                        fecha_actual.year, fecha_actual.month, fecha_actual.day,
+                        h_ini, m_ini, 0
+                    ))
+                    franja_fin_local = tz.localize(datetime(
+                        fecha_actual.year, fecha_actual.month, fecha_actual.day,
+                        h_fin, m_fin, 0
+                    ))
+
+                    # Convertir a UTC para almacenar en Odoo
+                    slot_inicio = slot_inicio_local.astimezone(pytz.utc).replace(tzinfo=None)
+                    franja_fin = franja_fin_local.astimezone(pytz.utc).replace(tzinfo=None)
 
                     while slot_inicio + duracion <= franja_fin:
                         slot_fin = slot_inicio + duracion
 
-                        # Verificar que no exista ya este slot
                         existe = self.search_count([
-                            ('medico_id', '=', medico.id),
-                            ('fecha_inicio', '=', slot_inicio),
+                        ('medico_id', '=', medico.id),
+                        ('fecha_inicio', '=', slot_inicio),
                         ])
                         if not existe:
                             slots_a_crear.append({
@@ -115,7 +120,7 @@ class ClinicaSlot(models.Model):
                                 'estado': 'libre',
                             })
 
-                        slot_inicio = slot_fin
+                        slot_inicio = slot_inicio + duracion
 
             fecha_actual += timedelta(days=1)
 

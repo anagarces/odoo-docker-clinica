@@ -33,6 +33,24 @@ class ClinicaAusencia(models.Model):
         'ausencia_id',
         string='Slots Bloqueados'
     )
+    name = fields.Char(
+        string='Descripción',
+        compute='_compute_name',
+        store=True
+)
+
+    @api.depends('medico_id', 'motivo', 'fecha_inicio', 'fecha_fin')
+    def _compute_name(self):
+        for ausencia in self:
+            if ausencia.medico_id and ausencia.fecha_inicio:
+                motivo_label = dict(
+                    self._fields['motivo'].selection
+                ).get(ausencia.motivo, '')
+                ausencia.name = (
+                    f"{ausencia.medico_id.name} — "
+                    f"{motivo_label} "
+                    f"({ausencia.fecha_inicio} / {ausencia.fecha_fin})"
+                )
 
     @api.constrains('fecha_inicio', 'fecha_fin')
     def _check_fechas(self):

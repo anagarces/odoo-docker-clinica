@@ -6,12 +6,12 @@
         <field name="name">clinica.medico.horario.list</field>
         <field name="model">clinica.medico.horario</field>
         <field name="arch" type="xml">
-            <list string="Horarios">
+            <tree string="Horarios">
                 <field name="medico_id"/>
                 <field name="dia_semana"/>
                 <field name="hora_inicio" widget="float_time"/>
                 <field name="hora_fin" widget="float_time"/>
-            </list>
+            </tree>
         </field>
     </record>
 

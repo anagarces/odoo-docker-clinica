@@ -2,11 +2,13 @@
 <odoo>
 
     <!-- VISTA LISTA -->
-    <record id="view_clinica_slot_list" model="ir.ui.view">
-        <field name="name">clinica.slot.list</field>
+    <record id="view_clinica_slot_tree" model="ir.ui.view">
+        <field name="name">clinica.slot.tree</field>
         <field name="model">clinica.slot</field>
         <field name="arch" type="xml">
-            <list string="Slots"
+            <tree string="Slots"
+                create="false"
+                delete="false"
                 decoration-success="estado == 'libre'"
                 decoration-danger="estado == 'ocupado'"
                 decoration-muted="estado == 'bloqueado'"
@@ -17,7 +19,7 @@
                 <field name="estado"/>
                 <field name="cita_id"/>
                 <field name="ausencia_id"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -33,7 +35,7 @@
                             <field name="medico_id"/>
                             <field name="fecha_inicio"/>
                             <field name="fecha_fin"/>
-                            <field name="estado"/>
+                            <field name="estado" readonly="1"/>
                         </group>
                         <group string="Asignación">
                             <field name="cita_id"/>
@@ -97,7 +99,7 @@
     <record id="action_clinica_slot" model="ir.actions.act_window">
         <field name="name">Planificación de Slots</field>
         <field name="res_model">clinica.slot</field>
-        <field name="view_mode">list,form</field>
+        <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="view_clinica_slot_search"/>
         <field name="context">{'search_default_filter_libres': 1}</field>
     </record>
