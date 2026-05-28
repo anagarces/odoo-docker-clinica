@@ -1,51 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_clinica_cita_tree" model="ir.ui.view">
-        <field name="name">clinica.cita.tree</field>
+    <!-- VISTA LISTA -->
+    <record id="view_clinica_cita_list" model="ir.ui.view">
+        <field name="name">clinica.cita.list</field>
         <field name="model">clinica.cita</field>
         <field name="arch" type="xml">
-            <tree string="Citas Médicas">
+            <list string="Citas"
+                decoration-success="estado == 'concluida'"
+                decoration-danger="estado == 'cancelada'"
+                decoration-info="estado == 'borrador'"
+            >
                 <field name="name"/>
-                <field name="fecha_cita"/>
                 <field name="paciente_id"/>
                 <field name="medico_id"/>
-                <field name="estado" widget="badge" decoration-info="estado == 'borrador'" decoration-success="estado == 'concluida'" decoration-danger="estado == 'cancelada'"/>
-            </tree>
+                <field name="fecha_inicio"/>
+                <field name="fecha_fin"/>
+                <field name="estado"/>
+            </list>
         </field>
     </record>
 
+    <!-- VISTA FORMULARIO -->
     <record id="view_clinica_cita_form" model="ir.ui.view">
         <field name="name">clinica.cita.form</field>
         <field name="model">clinica.cita</field>
         <field name="arch" type="xml">
             <form string="Cita Médica">
                 <header>
-                    <field name="estado" widget="statusbar" statusbar_visible="borrador,concluida,cancelada"/>
+                    <button
+                        name="%(action_clinica_cita_concluir)d"
+                        string="Marcar como Asistida"
+                        type="action"
+                        class="btn-primary"
+                        invisible="estado != 'borrador'"
+                    />
+                    <button
+                        name="action_cancelar"
+                        string="Cancelar Cita"
+                        type="object"
+                        class="btn-danger"
+                        invisible="estado != 'borrador'"
+                    />
+                    <field name="estado" widget="statusbar"
+                        statusbar_visible="borrador,concluida,cancelada"
+                    />
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
-                        <group>
-                            <field name="paciente_id"/>
-                            <field name="medico_id"/>
+                        <group string="Paciente y Médico">
+                            <field name="paciente_id"
+                                readonly="estado != 'borrador'"
+                            />
+                            <field name="medico_id"
+                                readonly="estado != 'borrador'"
+                            />
                         </group>
-                        <group>
-                            <field name="fecha_cita"/>
+                        <group string="Horario">
+                            <field name="slot_id"
+                                readonly="estado != 'borrador'"
+                            />
+                            <field name="fecha_inicio"/>
+                            <field name="fecha_fin"/>
                         </group>
                     </group>
-                    <group string="Notas Médicas">
-                        <field name="motivo" placeholder="Escribe aquí el motivo de la consulta..."/>
+                    <group string="Motivo de la Consulta">
+                        <field name="motivo" nolabel="1"/>
                     </group>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- VISTA BÚSQUEDA -->
+    <record id="view_clinica_cita_search" model="ir.ui.view">
+        <field name="name">clinica.cita.search</field>
+        <field name="model">clinica.cita</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Citas">
+                <field name="name"/>
+                <field name="paciente_id"/>
+                <field name="medico_id"/>
+                <filter
+                    string="Programadas"
+                    name="filter_borrador"
+                    domain="[('estado', '=', 'borrador')]"
+                />
+                <filter
+                    string="Asistidas"
+                    name="filter_concluidas"
+                    domain="[('estado', '=', 'concluida')]"
+                />
+                <filter
+                    string="Canceladas"
+                    name="filter_canceladas"
+                    domain="[('estado', '=', 'cancelada')]"
+                />
+                <separator/>
+                <filter
+                    string="Hoy"
+                    name="filter_hoy"
+                    domain="[
+                        ('fecha_inicio', '&gt;=', datetime.datetime.now().strftime('%Y-%m-%d 00:00:00')),
+                        ('fecha_inicio', '&lt;=', datetime.datetime.now().strftime('%Y-%m-%d 23:59:59'))
+                    ]"
+                />
+                <group expand="0" string="Agrupar por">
+                    <filter
+                        string="Médico"
+                        name="group_medico"
+                        context="{'group_by': 'medico_id'}"
+                    />
+                    <filter
+                        string="Estado"
+                        name="group_estado"
+                        context="{'group_by': 'estado'}"
+                    />
+                    <filter
+                        string="Fecha"
+                        name="group_fecha"
+                        context="{'group_by': 'fecha_inicio:day'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- ACCIÓN -->
     <record id="action_clinica_cita" model="ir.actions.act_window">
-        <field name="name">Citas Médicas</field>
-        <field name="type">ir.actions.act_window</field>
+        <field name="name">Citas</field>
         <field name="res_model">clinica.cita</field>
-        <field name="view_mode">tree,form</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_clinica_cita_search"/>
+        <field name="context">{'search_default_filter_borrador': 1}</field>
     </record>
 
 </odoo>
