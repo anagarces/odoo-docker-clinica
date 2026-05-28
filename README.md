@@ -20,7 +20,7 @@ Este módulo permite gestionar de forma integral el flujo de una clínica privad
 | Docker | 24+ |
 
 ### Dependencias Python
-- `pytz` (incluida en la imagen oficial de Odoo)
+- `pytz`
 
 ### Dependencias Odoo
 - `base`
