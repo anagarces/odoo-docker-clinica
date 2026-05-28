@@ -1,10 +1,13 @@
 #  Módulo Clínica — Odoo 17
 
-Módulo de gestión clínica desarrollado sobre **Odoo 17 Community** como proyecto de portafolio. Implementa un sistema completo de agenda médica con generación automática de slots, gestión de ausencias y control de citas para clínicas privadas.
+> Proyecto de portafolio desarrollado sobre **Odoo 17 Community**.  
+> Implementa un sistema completo de agenda médica para clínicas privadas con generación automática de slots, gestión de ausencias y control de citas.
+
+🔗 **Repositorio:** [github.com/anagarces/odoo-docker-clinica](https://github.com/anagarces/odoo-docker-clinica)
 
 ---
 
-##  Descripción
+## 📋 Descripción
 
 Este módulo permite gestionar de forma integral el flujo de una clínica privada pequeña: desde la configuración del horario semanal de cada médico hasta el agendamiento de citas por parte de la recepcionista, evitando solapamientos y respetando la disponibilidad real de cada profesional.
 
@@ -20,31 +23,29 @@ Este módulo permite gestionar de forma integral el flujo de una clínica privad
 | Docker | 24+ |
 
 ### Dependencias Python
-- `pytz`
+- `pytz` (incluida en la imagen oficial de Odoo)
 
 ### Dependencias Odoo
 - `base`
 
 ---
 
-##  Instalación
+## 🚀 Instalación
 
-### Con Docker (recomendado)
-
-1. Clona el repositorio dentro de tu carpeta de addons:
+### 1. Clonar el repositorio
 
 ```bash
-git clone <url-repositorio> ./extra-addons/clinica
+git clone https://github.com/anagarces/odoo-docker-clinica.git
+cd odoo-docker-clinica
 ```
 
-2. Asegúrate de que tu `docker-compose.yml` monta la carpeta correctamente:
+### 2. Levantar los contenedores
 
-```yaml
-volumes:
-  - ./extra-addons:/mnt/extra-addons
+```bash
+docker compose up -d
 ```
 
-3. Instala el módulo:
+### 3. Instalar el módulo
 
 ```bash
 docker exec <contenedor_odoo> odoo -i clinica -d <nombre_bd> \
@@ -53,7 +54,7 @@ docker exec <contenedor_odoo> odoo -i clinica -d <nombre_bd> \
   --stop-after-init
 ```
 
-4. Reinicia el contenedor:
+### 4. Reiniciar el contenedor
 
 ```bash
 docker restart <contenedor_odoo>
@@ -68,42 +69,49 @@ docker exec <contenedor_odoo> odoo -u clinica -d <nombre_bd> \
   --stop-after-init
 ```
 
----
-
-## Estructura del módulo
-
-```
-clinica/
-├── __init__.py
-├── __manifest__.py
-├── models/
-│   ├── __init__.py
-│   ├── clinica_paciente.py       # Registro de pacientes
-│   ├── clinica_medico.py         # Médicos, zona horaria, generación de slots
-│   ├── clinica_medico_horario.py # Franjas horarias semanales
-│   ├── clinica_slot.py           # Slots de disponibilidad generados
-│   ├── clinica_ausencia.py       # Ausencias médicas con bloqueo de slots
-│   └── clinica_cita.py           # Citas médicas con máquina de estados
-├── data/
-│   ├── sequence.xml              # Secuencia para código de cita
-│   └── cron.xml                  # Cron semanal de generación de slots
-├── security/
-│   └── ir.model.access.csv       # Permisos de acceso a modelos
-├── views/
-│   ├── medico_view.xml
-│   ├── medico_horario_view.xml
-│   ├── slot_view.xml
-│   ├── ausencia_view.xml
-│   ├── paciente_view.xml
-│   ├── cita_view.xml
-│   └── menu.xml
-└── demo/
-    └── paciente_demo.xml
-```
+> **Nota:** Usa `-u` para actualizar vistas y modelos sin perder datos. Usa `-i` solo para instalaciones desde cero.
 
 ---
 
-##  Modelos
+## 🗂️ Estructura del repositorio
+
+```
+odoo-docker-clinica/
+├── docker-compose.yml
+├── .gitignore
+├── README.md
+└── addons/
+    └── clinica/
+        ├── __init__.py
+        ├── __manifest__.py
+        ├── models/
+        │   ├── __init__.py
+        │   ├── clinica_paciente.py       # Registro de pacientes
+        │   ├── clinica_medico.py         # Médicos, zona horaria, generación de slots
+        │   ├── clinica_medico_horario.py # Franjas horarias semanales
+        │   ├── clinica_slot.py           # Slots de disponibilidad generados
+        │   ├── clinica_ausencia.py       # Ausencias médicas con bloqueo de slots
+        │   └── clinica_cita.py           # Citas médicas con máquina de estados
+        ├── data/
+        │   ├── sequence.xml              # Secuencia para código de cita
+        │   └── cron.xml                  # Cron semanal de generación de slots
+        ├── security/
+        │   └── ir.model.access.csv       # Permisos de acceso a modelos
+        ├── views/
+        │   ├── medico_view.xml
+        │   ├── medico_horario_view.xml
+        │   ├── slot_view.xml
+        │   ├── ausencia_view.xml
+        │   ├── paciente_view.xml
+        │   ├── cita_view.xml
+        │   └── menu.xml
+        └── demo/
+            └── paciente_demo.xml
+```
+
+---
+
+## 🧩 Modelos
 
 ### `clinica.paciente`
 Registro de pacientes con datos personales e información médica básica.
@@ -143,7 +151,7 @@ Franjas horarias semanales abstractas del médico.
 |---|---|---|
 | `medico_id` | Many2one | Médico propietario |
 | `dia_semana` | Selection | Día (0=Lunes … 6=Domingo) |
-| `hora_inicio` | Float | Hora de inicio (9.5 = 09:30) |
+| `hora_inicio` | Float | Hora de inicio (ej. 9.5 = 09:30) |
 | `hora_fin` | Float | Hora de fin |
 
 ---
@@ -154,8 +162,8 @@ Hueco de disponibilidad concreto generado a partir del horario semanal.
 | Campo | Tipo | Descripción |
 |---|---|---|
 | `medico_id` | Many2one | Médico asignado |
-| `fecha_inicio` | Datetime | Inicio del slot (UTC) |
-| `fecha_fin` | Datetime | Fin del slot (UTC) |
+| `fecha_inicio` | Datetime | Inicio del slot (almacenado en UTC) |
+| `fecha_fin` | Datetime | Fin del slot (almacenado en UTC) |
 | `estado` | Selection | `libre / ocupado / bloqueado` |
 | `cita_id` | Many2one | Cita asignada (si ocupado) |
 | `ausencia_id` | Many2one | Ausencia que lo bloquea |
@@ -174,7 +182,7 @@ Ausencia de un médico en un rango de fechas.
 | `estado` | Selection | `pendiente / confirmada / cancelada` |
 | `slot_ids` | One2many | Slots bloqueados por esta ausencia |
 
-> Al **confirmar** una ausencia se bloquean automáticamente todos los slots libres del médico en ese rango. Al **cancelar** se liberan.
+> Al **confirmar** una ausencia se bloquean automáticamente todos los slots libres del médico en ese rango. Al **cancelarla** se liberan.
 
 ---
 
@@ -194,7 +202,7 @@ Cita médica asignada a un slot disponible.
 
 ---
 
-## Flujo de uso
+## 🔄 Flujo de uso
 
 ```
 1. Administrador crea el médico
@@ -212,17 +220,17 @@ Cita médica asignada a un slot disponible.
 
 5. Recepcionista crea la cita
    └─ Elige paciente y médico
-   └─ El campo Horario Disponible muestra solo slots libres
+   └─ El campo Horario Disponible muestra solo slots libres en hora local
    └─ Al guardar el slot pasa a "Ocupado"
 
 6. Gestión posterior
    └─ "Marcar como Asistida" → estado Asistió
-   └─ "Cancelar Cita" → estado Cancelada + slot vuelve a Libre
+   └─ "Cancelar Cita"        → estado Cancelada + slot vuelve a Libre
 ```
 
 ---
 
-## Menú y accesos
+## 🖥️ Menú y accesos
 
 ```
 Clínica
@@ -247,29 +255,32 @@ Los slots se generan usando la zona horaria definida en la ficha del médico (`t
 En lugar de validar solapamientos con búsquedas en `clinica.cita`, cada hueco horario es un registro independiente con estado propio. Esto simplifica la lógica de validación y hace el sistema más robusto.
 
 **Generación idempotente**
-El método `generar_slots_medico` verifica existencia antes de crear cada slot. Puede ejecutarse múltiples veces sin generar duplicados.
+El método `generar_slots_medico` verifica existencia antes de crear cada slot. Puede ejecutarse múltiples veces sin generar duplicados, lo que permite al cron semanal funcionar de forma segura.
 
 **Máquina de estados en citas**
 Las transiciones de estado se controlan mediante métodos explícitos (`action_cancelar`, `action_concluir`) con validaciones, evitando transiciones inválidas como concluir una cita cancelada.
 
 **Float para horas abstractas**
-El horario semanal almacena horas como `Float` (`9.5 = 09:30`), siguiendo la convención de Odoo RRHH. La conversión a `Datetime` concreto ocurre solo en el momento de generar slots.
+El horario semanal almacena horas como `Float` (`9.5 = 09:30`), siguiendo la convención de Odoo RRHH (`resource.calendar`). La conversión a `Datetime` concreto ocurre solo en el momento de generar slots.
+
+**Creación de slots en batch**
+El método de generación acumula todos los slots en una lista y llama a `self.create(lista)` una sola vez, evitando N queries a la base de datos dentro del bucle.
 
 ---
 
-##  Estado del proyecto
+## 📌 Estado del proyecto
 
-| Funcionalidad 
+| Funcionalidad | Estado |
 |---|---|
-| Gestión de pacientes 
-| Gestión de médicos y horarios 
-| Generación automática de slots 
-| Cron semanal 
-| Gestión de ausencias
-| Agendamiento de citas con slots
-| Máquina de estados en citas 
-| Seguridad por grupos de usuario
-| Datos demo actualizados 
+| Gestión de pacientes | ✅ Completo |
+| Gestión de médicos y horarios | ✅ Completo |
+| Generación automática de slots | ✅ Completo |
+| Cron semanal | ✅ Completo |
+| Gestión de ausencias | ✅ Completo |
+| Agendamiento de citas con slots | ✅ Completo |
+| Máquina de estados en citas | ✅ Completo |
+| Seguridad por grupos de usuario | ⏳ Pendiente |
+| Datos demo actualizados | ⏳ Pendiente |
 
 ---
 
