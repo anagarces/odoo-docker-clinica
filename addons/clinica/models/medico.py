@@ -1,5 +1,8 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from datetime import date, timedelta
+import pytz
+
 
 class ClinicaMedico(models.Model):
     _name = 'clinica.medico'
@@ -18,6 +21,12 @@ class ClinicaMedico(models.Model):
         default=40,
         required=True
     )
+    tz = fields.Selection(
+        string='Zona Horaria',
+        selection='_tz_get',
+        default=lambda self: self.env.user.tz or 'Europe/Madrid',
+        required=True,
+    )
     horario_ids = fields.One2many(
         'clinica.medico.horario',
         'medico_id',
@@ -34,6 +43,9 @@ class ClinicaMedico(models.Model):
         string='Ausencias'
     )
 
+    @api.model
+    def _tz_get(self):
+        return [(tz, tz) for tz in pytz.all_timezones]
 
     @api.constrains('duracion_cita')
     def _check_duracion(self):
@@ -47,14 +59,9 @@ class ClinicaMedico(models.Model):
                     "La duración de la cita no puede superar las 2 horas."
                 )
 
-     def action_generar_slots(self):
-        """
-        Botón manual: genera slots para las próximas 4 semanas
-        desde hoy para el médico seleccionado.
-        """
+    def action_generar_slots(self):
         hoy = date.today()
         fecha_fin = hoy + timedelta(weeks=4)
-
         for medico in self:
             creados = self.env['clinica.slot'].generar_slots_medico(
                 medico=medico,
@@ -74,18 +81,10 @@ class ClinicaMedico(models.Model):
 
     @api.model
     def _cron_generar_slots(self):
-        """
-        Llamado por el cron semanal.
-        Para cada médico activo, genera slots de la semana +4
-        manteniendo siempre un horizonte de 4 semanas disponibles.
-        """
         hoy = date.today()
-        # El cron genera solo la semana que está a 4 semanas vista
-        # para no duplicar trabajo ya hecho
         fecha_inicio = hoy + timedelta(weeks=4)
         fecha_fin = fecha_inicio + timedelta(weeks=1)
-
-        medicos = self.search([])  # todos los médicos
+        medicos = self.search([])
         for medico in medicos:
             if medico.horario_ids:
                 self.env['clinica.slot'].generar_slots_medico(

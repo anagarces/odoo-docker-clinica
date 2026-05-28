@@ -47,12 +47,10 @@ class ClinicaCita(models.Model):
         ('cancelada', 'Cancelada')
     ], string='Estado', default='borrador', required=True)
 
-
-
     @api.onchange('medico_id')
     def _onchange_medico_id(self):
         """
-     Al cambiar el médico, limpiar el slot seleccionado.
+    Al cambiar el médico, limpiar el slot seleccionado.
         Evita que quede un slot de un médico anterior
         mientras se muestra la lista del nuevo médico.
         """
@@ -84,10 +82,39 @@ class ClinicaCita(models.Model):
                     })
         return res
 
+    def action_cancelar(self):
+        """
+    Cancela la cita y libera el slot asociado.
+    """
+        for cita in self:
+            if cita.estado == 'cancelada':
+                raise ValidationError(
+                    "Esta cita ya está cancelada."
+            )
+            if cita.estado == 'concluida':
+                raise ValidationError(
+                    "No se puede cancelar una cita que ya fue atendida."
+            )
+            cita.estado = 'cancelada'
+
+    def action_concluir(self):
+        """
+    Marca la cita como concluida.
+    """
+        for cita in self:
+            if cita.estado == 'concluida':
+                raise ValidationError(
+                    "Esta cita ya fue marcada como asistida."
+            )
+            if cita.estado == 'cancelada':
+                raise ValidationError(
+                    "No se puede concluir una cita cancelada."
+            )
+            cita.estado = 'concluida'
+
     @api.constrains('slot_id', 'paciente_id', 'estado')
     def _check_disponibilidad_paciente(self):
-        """
-        El slot ya protege al médico.
+        """El slot ya protege al médico.
         Solo necesitamos validar que el paciente
         no tenga otra cita solapada con otro médico.
         """

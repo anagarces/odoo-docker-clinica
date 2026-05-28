@@ -6,7 +6,7 @@
         <field name="name">clinica.cita.list</field>
         <field name="model">clinica.cita</field>
         <field name="arch" type="xml">
-            <list string="Citas"
+            <tree string="Citas"
                 decoration-success="estado == 'concluida'"
                 decoration-danger="estado == 'cancelada'"
                 decoration-info="estado == 'borrador'"
@@ -17,7 +17,7 @@
                 <field name="fecha_inicio"/>
                 <field name="fecha_fin"/>
                 <field name="estado"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -29,12 +29,11 @@
             <form string="Cita Médica">
                 <header>
                     <button
-                        name="%(action_clinica_cita_concluir)d"
+                        name="action_concluir"
                         string="Marcar como Asistida"
-                        type="action"
+                        type="object"
                         class="btn-primary"
-                        invisible="estado != 'borrador'"
-                    />
+                        invisible="estado != 'borrador'"/>
                     <button
                         name="action_cancelar"
                         string="Cancelar Cita"

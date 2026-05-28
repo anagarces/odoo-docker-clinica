@@ -5,13 +5,13 @@
         <field name="name">clinica.paciente.list</field>
         <field name="model">clinica.paciente</field>
         <field name="arch" type="xml">
-            <list string="Pacientes">
+            <tree string="Pacientes">
                 <field name="name"/>
                 <field name="fecha_nacimiento"/>
                 <field name="tipo_sangre"/>
                 <field name="telefono"/>
                 <field name="es_alergico"/>
-            </list>
+            </tree>
         </field>
     </record>
 
@@ -38,12 +38,12 @@
                     <notebook>
                         <page string="Historial de Citas">
                             <field name="cita_ids">
-                                <list>
+                                <tree>
                                     <field name="name"/>
                                     <field name="medico_id"/>
                                     <field name="fecha_inicio"/>
                                     <field name="estado"/>
-                                </list>
+                                </tree>
                             </field>
                         </page>
                     </notebook>
