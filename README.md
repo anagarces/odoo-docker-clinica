@@ -279,8 +279,7 @@ El método de generación acumula todos los slots en una lista y llama a `self.c
 | Gestión de ausencias | ✅ Completo |
 | Agendamiento de citas con slots | ✅ Completo |
 | Máquina de estados en citas | ✅ Completo |
-| Seguridad por grupos de usuario | ⏳ Pendiente |
-| Datos demo actualizados | ⏳ Pendiente |
+
 
 ---
 
