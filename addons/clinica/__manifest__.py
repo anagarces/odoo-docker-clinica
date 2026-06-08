@@ -17,9 +17,6 @@
         'views/cita_view.xml',
         'views/menu.xml',
     ],
-    'demo': [
-        'demo/paciente_demo.xml',
-    ],
     'installable': True,
     'application': True,
 }
