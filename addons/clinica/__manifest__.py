@@ -5,6 +5,7 @@
     'category': 'Healthcare',
     'depends': ['base'],
     'data': [
+        'security/groups.xml',
         'security/ir.model.access.csv',
         'data/sequence.xml',
         'data/cron.xml',

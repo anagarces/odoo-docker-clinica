@@ -51,6 +51,7 @@
         name="Configuración"
         parent="menu_clinica_root"
         sequence="30"
+        groups="clinica.group_clinica_admin"
     />
     <menuitem
         id="menu_clinica_medicos"
@@ -58,6 +59,7 @@
         parent="menu_clinica_configuracion"
         action="action_clinica_medico"
         sequence="10"
+        groups="clinica.group_clinica_admin"
     />
     <menuitem
         id="menu_clinica_pacientes"
@@ -65,6 +67,7 @@
         parent="menu_clinica_configuracion"
         action="action_clinica_paciente"
         sequence="20"
+        groups="clinica.group_clinica_admin"
     />
 
 </odoo>

@@ -27,6 +27,7 @@
                         string="Generar Slots (4 semanas)"
                         type="object"
                         class="btn-primary"
+                        groups="clinica.group_clinica_admin"
                     />
                 </header>
                 <sheet>
