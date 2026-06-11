@@ -63,6 +63,18 @@ class ClinicaAusencia(models.Model):
     def action_confirmar(self):
         """Al confirmar, bloquea todos los slots del médico en ese rango."""
         for ausencia in self:
+            citas_activas = self.env['clinica.cita'].search([
+                ('medico_id', '=', ausencia.medico_id.id),
+                ('estado', '=', 'borrador'),
+                ('fecha_inicio', '>=', f"{ausencia.fecha_inicio} 00:00:00"),
+                ('fecha_inicio', '<=', f"{ausencia.fecha_fin} 23:59:59"),
+            ])
+            if citas_activas:
+                codigos = ', '.join(citas_activas.mapped('name'))
+                raise ValidationError(
+                    f"El médico tiene citas programadas en este período: {codigos}. "
+                    f"Cancélalas antes de confirmar la ausencia."
+                )
             slots = self.env['clinica.slot'].search([
                 ('medico_id', '=', ausencia.medico_id.id),
                 ('fecha_inicio', '>=', f"{ausencia.fecha_inicio} 00:00:00"),
@@ -83,3 +95,12 @@ class ClinicaAusencia(models.Model):
                 'ausencia_id': False,
             })
             ausencia.estado = 'cancelada'
+
+    def unlink(self):
+        for ausencia in self:
+            if ausencia.estado == 'confirmada':
+                raise ValidationError(
+                    f"No se puede eliminar la ausencia '{ausencia.name}' porque está confirmada. "
+                    f"Cancélala primero para liberar los slots bloqueados."
+                )
+        return super().unlink()

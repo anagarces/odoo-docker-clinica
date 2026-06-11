@@ -62,9 +62,8 @@ class ClinicaSlot(models.Model):
         if not medico.horario_ids:
             return 0
 
-        # Obtener timezone del usuario o usar UTC por defecto
-        tz_name = self.env.user.tz or 'UTC'
-        import pytz
+        # Usar timezone del médico para que los slots se creen en su horario local
+        tz_name = medico.tz or 'UTC'
         tz = pytz.timezone(tz_name)
 
         horarios_por_dia = {}

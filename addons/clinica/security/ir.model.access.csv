@@ -9,5 +9,5 @@ access_recep_paciente,access.recep.paciente,model_clinica_paciente,clinica.group
 access_recep_medico,access.recep.medico,model_clinica_medico,clinica.group_clinica_recepcionista,1,0,0,0
 access_recep_horario,access.recep.horario,model_clinica_medico_horario,clinica.group_clinica_recepcionista,1,0,0,0
 access_recep_slot,access.recep.slot,model_clinica_slot,clinica.group_clinica_recepcionista,1,1,0,0
-access_recep_ausencia,access.recep.ausencia,model_clinica_ausencia,clinica.group_clinica_recepcionista,1,1,1,0
+access_recep_ausencia,access.recep.ausencia,model_clinica_ausencia,clinica.group_clinica_recepcionista,1,0,0,0
 access_recep_cita,access.recep.cita,model_clinica_cita,clinica.group_clinica_recepcionista,1,1,1,0
