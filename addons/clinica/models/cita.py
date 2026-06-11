@@ -112,6 +112,24 @@ class ClinicaCita(models.Model):
             )
             cita.estado = 'concluida'
 
+    @api.constrains('slot_id', 'medico_id', 'estado')
+    def _check_solapamiento_medico(self):
+        for cita in self:
+            if cita.estado == 'cancelada' or not cita.slot_id:
+                continue
+            solapadas = self.search([
+                ('id', '!=', cita.id),
+                ('medico_id', '=', cita.medico_id.id),
+                ('estado', '!=', 'cancelada'),
+                ('slot_id.fecha_inicio', '<', cita.slot_id.fecha_fin),
+                ('slot_id.fecha_fin', '>', cita.slot_id.fecha_inicio),
+            ])
+            if solapadas:
+                raise ValidationError(
+                    f"El médico {cita.medico_id.name} ya tiene una cita "
+                    f"asignada en ese horario."
+                )
+
     @api.constrains('slot_id', 'paciente_id', 'estado')
     def _check_disponibilidad_paciente(self):
         """El slot ya protege al médico.
