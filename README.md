@@ -249,7 +249,7 @@ Clínica
 ## 🔧 Decisiones técnicas destacadas
 
 **Zona horaria en el médico, no en el usuario**
-Los slots se generan usando la zona horaria definida en la ficha del médico (`tz`), no la del usuario que pulsa el botón. Esto garantiza consistencia independientemente de quién ejecute la acción.
+Los slots se generan usando la zona horaria definida en la ficha del médico. Esto garantiza consistencia independientemente de quién ejecute la acción.
 
 **Slots como entidad propia**
 En lugar de validar solapamientos con búsquedas en `clinica.cita`, cada hueco horario es un registro independiente con estado propio. Esto simplifica la lógica de validación y hace el sistema más robusto.
